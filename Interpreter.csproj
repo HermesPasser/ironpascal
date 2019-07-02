@@ -34,9 +34,18 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Lexer\LexerException.cs" />
+    <Compile Include="Lexer\TokenKind.cs" />
+    <Compile Include="Parser\ParseException.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Interpreter.cs" />
-    <Compile Include="Token.cs" />
+    <Compile Include="Interpreter\Interpreter.cs" />
+    <Compile Include="Interpreter\NodeVisitor.cs" />
+    <Compile Include="Lexer\Token.cs" />
+    <Compile Include="Lexer\Lexer.cs" />
+    <Compile Include="Parser\AST.cs" />
+    <Compile Include="Parser\Number.cs" />
+    <Compile Include="Parser\BinaryOperation.cs" />
+    <Compile Include="Parser\Parser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
