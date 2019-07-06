@@ -1,12 +1,12 @@
 using System;
 using System.Reflection;
-using ExpressionInterpreter.Parse;
+using IronPascal.Parse;
 
-namespace ExpressionInterpreter.Interpret
+namespace IronPascal.Interpret
 {
-    class NodeVisitor
+    public class NodeVisitor
     {
-        public int Visit(AST node)
+        public int Visit(AST node)//TODO: SOMETHING WILL BREAK IF THIS RETURN INT, SHOULD NOT BE OBJECT?
         {
             string methodName = $"Visit{node.GetType().Name}";
             MethodInfo visitor = GetType().GetMethod(methodName); // the method should de public

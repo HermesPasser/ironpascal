@@ -1,13 +1,13 @@
 using System;
-using ExpressionInterpreter.Lex;
+using IronPascal.Lex;
 
-namespace ExpressionInterpreter.Parse
+namespace IronPascal.Parse
 {
-    class BinaryOperation : AST
+    public class BinaryOperation : AST
     {
-        public AST Left;
-        public AST Right;
-        public Token Operation;
+        public readonly AST Left;
+        public readonly AST Right;
+        public readonly Token Operation;
         Token token;
 
         public BinaryOperation(AST left, Token op, AST right)

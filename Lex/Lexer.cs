@@ -1,35 +1,57 @@
 using System;
-
-namespace ExpressionInterpreter.Lex
+using System.Collections.Generic;
+namespace IronPascal.Lex
 {
-    class Lexer
+    public class Lexer
     {
         public string Text;
         private int Position = 0;
         private char? CurrentChar;
+
+        private Dictionary<string, Token> ReservedKeywords =
+            new Dictionary<string, Token>
+            {
+                ["BEGIN"] = new Token(TokenKind.KeyBegin, "BEGIN"),
+                ["END"] = new Token(TokenKind.KeyEnd, "END"),
+            };
 
         public Lexer(string text)
         {
             Text = text;
             CurrentChar = Text[Position];
         }
-          
+
         Exception ThrowError() => throw new LexerException($"Invalid character '{CurrentChar}'");
-        
-        void Advance()
+
+        void Advance(int times = 1)
         {
-            Position++;
-            if (Position > Text.Length -1 )
-                CurrentChar = null; // maybe use \x0 instead? and then change char? to char
-            else
-            {
-                CurrentChar = Text[Position];
-            }
+            for(int i = 0; i < times; i++)
+                CurrentChar = (++Position > Text.Length - 1) ?
+                    null : (char?)Text[Position];
         }
+
+        public char? Peek() => (Position + 1 > Text.Length - 1) ? null : (char?)Text[Position + 1];
+        
         void SkipWhiteSpace()
         {
             while (CurrentChar.HasValue && char.IsWhiteSpace(CurrentChar.Value))
                 Advance();
+        }
+
+        Token Id()
+        {
+            string key = "";
+            // TODO: remove latin characters
+            while(CurrentChar.HasValue && char.IsLetter(CurrentChar.Value))
+            {
+                key += CurrentChar;
+                Advance();
+            }
+
+            if (ReservedKeywords.ContainsKey(key))
+                return ReservedKeywords[key];
+
+            return new Token(TokenKind.Id, key);
         }
 
         int Integer()
@@ -53,9 +75,25 @@ namespace ExpressionInterpreter.Lex
                     continue;
                 }
 
+                // TODO: stills accepts latin letters
+                if (char.IsLetter(CurrentChar.Value))
+                    return Id();
+
                 if (char.IsDigit(CurrentChar.Value))
                 {
-                    return new Token(TokenKind.Int, Integer().ToString());
+                    return new Token(TokenKind.Int, Integer());
+                }
+
+                if (CurrentChar == ':' && Peek() == '=')
+                {
+                    Advance(2);
+                    return new Token(TokenKind.Assign, ":=");
+                }
+
+                if (CurrentChar == ';')
+                {
+                    Advance();
+                    return new Token(TokenKind.Semi, ";");
                 }
 
                 if (CurrentChar == '+')
@@ -93,7 +131,13 @@ namespace ExpressionInterpreter.Lex
                     Advance();
                     return new Token(TokenKind.RParen, ")");
                 }
-                
+
+                if (CurrentChar == '.')
+                {
+                    Advance();
+                    return new Token(TokenKind.Dot, ".");
+                }
+
                 ThrowError();
             }
 

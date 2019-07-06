@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -34,18 +34,23 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Lexer\LexerException.cs" />
-    <Compile Include="Lexer\TokenKind.cs" />
-    <Compile Include="Parser\ParseException.cs" />
+    <Compile Include="Parse\Assign.cs" />
+    <Compile Include="Parse\Compound.cs" />
+    <Compile Include="Parse\NoOperation.cs" />
+    <Compile Include="Parse\Variable.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Interpreter\Interpreter.cs" />
-    <Compile Include="Interpreter\NodeVisitor.cs" />
-    <Compile Include="Lexer\Token.cs" />
-    <Compile Include="Lexer\Lexer.cs" />
-    <Compile Include="Parser\AST.cs" />
-    <Compile Include="Parser\Number.cs" />
-    <Compile Include="Parser\BinaryOperation.cs" />
-    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Interpret\Interpreter.cs" />
+    <Compile Include="Interpret\NodeVisitor.cs" />
+    <Compile Include="Lex\Token.cs" />
+    <Compile Include="Lex\TokenKind.cs" />
+    <Compile Include="Lex\Lexer.cs" />
+    <Compile Include="Lex\LexerException.cs" />
+    <Compile Include="Parse\AST.cs" />
+    <Compile Include="Parse\Number.cs" />
+    <Compile Include="Parse\BinaryOperation.cs" />
+    <Compile Include="Parse\UnaryOperation.cs" />
+    <Compile Include="Parse\Parser.cs" />
+    <Compile Include="Parse\ParseException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExpressionInterpreter.Lex
+namespace IronPascal.Lex
 {
     class LexerException : Exception
     {
