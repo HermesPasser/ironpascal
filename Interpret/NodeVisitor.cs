@@ -6,11 +6,11 @@ namespace IronPascal.Interpret
 {
     public class NodeVisitor
     {
-        public int Visit(AST node)//TODO: SOMETHING WILL BREAK IF THIS RETURN INT, SHOULD NOT BE OBJECT?
+        public object Visit(AST node)
         {
             string methodName = $"Visit{node.GetType().Name}";
             MethodInfo visitor = GetType().GetMethod(methodName); // the method should de public
-            return (int)visitor.Invoke(this, new object[]{ node });
+            return visitor.Invoke(this, new object[]{ node });
         }
 
         // necessário? cs override e abstract

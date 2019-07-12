@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronPascal", "IronPascal.csproj", "{F2E967E4-B3CB-4AA8-A809-C6C7C3D2646A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronPascalTests", "..\IronPascalTests\IronPascalTests.csproj", "{5A36FF23-74C6-4C35-B5F2-DF75CB8D7C42}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronPascalTests", "Tests\IronPascalTests.csproj", "{5A36FF23-74C6-4C35-B5F2-DF75CB8D7C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

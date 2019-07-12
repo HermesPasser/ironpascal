@@ -31,9 +31,70 @@ namespace IronPascal.Parse
 
         AST Program()
         {
-            AST node = CompountStatement();
+            Eat(TokenKind.KeyProgram);
+            // TODO: dando erro já que não permiti que vars divessem numeros
+            Variable varNode = Variable(); // cuz the prog name follow the same rules as the variable
+            string progName = varNode.Value;
+            Eat(TokenKind.Semi);
+            Block blockNode = Block();
+            AST programNode = new Program(progName, blockNode);
             Eat(TokenKind.Dot);
-            return node;
+            return programNode;
+        }
+
+        Block Block()
+        {
+            List<AST> declarationNodes = Declarations();
+            AST compoundStatementNode = CompountStatement();
+            return new Block(declarationNodes, compoundStatementNode);
+        }
+
+        List<AST> Declarations()
+        {
+            List<AST> declarations = new List<AST>();
+            if (CurrentToken.Type == TokenKind.KeyVar)
+            {
+                Eat(TokenKind.KeyVar);
+                while (CurrentToken.Type == TokenKind.Id)
+                {
+                    declarations.AddRange(VariableDeclaration());
+                    Eat(TokenKind.Semi);
+                }
+            }
+            return declarations;
+        }
+
+        List<AST> VariableDeclaration()
+        {
+            List<AST> varNodes = new List<AST> { new Variable(CurrentToken) };
+            Eat(TokenKind.Id);
+            while(CurrentToken.Type == TokenKind.Comma)
+            {
+                Eat(TokenKind.Comma);
+                varNodes.Add(new Variable(CurrentToken));
+                Eat(TokenKind.Id);
+            }
+
+            Eat(TokenKind.Colon);
+            AST typeNode = TypeSpec();
+            var varDeclarations = new List<AST>();
+
+            foreach (var varNode in varNodes)
+                varDeclarations.Add(new VariableDeclaration(varNode, typeNode));
+
+            return varDeclarations;
+        }
+
+        AST TypeSpec()
+        {
+            Token token = CurrentToken;
+            if (CurrentToken.Type == TokenKind.Int)
+                Eat(TokenKind.Int);
+            else
+            {
+                Eat(TokenKind.Real);
+            }
+            return new TypeNode(token);
         }
 
         AST CompountStatement()
@@ -60,8 +121,6 @@ namespace IronPascal.Parse
                 results.Add(Statement());
             }
             			
-            if (CurrentToken.Type == TokenKind.Id) // 'cause is expecting a KeyEnd
-                ThrowError(TokenKind.Id); // TODO: a msg de erro que isso gera não faz sentido
             return results;
         }
 
@@ -92,9 +151,9 @@ namespace IronPascal.Parse
             return new Assign(left, token, right);
         }
 
-        AST Variable()
+        Variable Variable()
         {
-            AST node = new Variable(CurrentToken);
+            Variable node = new Variable(CurrentToken);
             Eat(TokenKind.Id);
             return node;
         }
@@ -124,14 +183,17 @@ namespace IronPascal.Parse
         {
             AST node = Factor();
 
-            while (new[] { TokenKind.Mul, TokenKind.Div }.Contains(CurrentToken.Type))
+            while (new[] { TokenKind.Mul, TokenKind.IntDiv, TokenKind.FloatDiv }.Contains(CurrentToken.Type))
             {
                 Token operation = CurrentToken;
                 if (operation.Type == TokenKind.Mul)
                     Eat(TokenKind.Mul);
 
-                if (operation.Type == TokenKind.Div)
-                    Eat(TokenKind.Div);
+                if (operation.Type == TokenKind.IntDiv)
+                    Eat(TokenKind.IntDiv);
+
+                if (operation.Type == TokenKind.FloatDiv)
+                    Eat(TokenKind.FloatDiv);
 
                 node = new BinaryOperation(node, operation, Factor());
             }
@@ -151,8 +213,11 @@ namespace IronPascal.Parse
                 case TokenKind.Minus:
                     Eat(TokenKind.Minus);
                     return new UnaryOperation(token, Factor());
-                case TokenKind.Int:
-                    Eat(TokenKind.Int);
+                case TokenKind.IntConst: // TODO: ver p q serve o Int e se ele ainda é usado
+                    Eat(TokenKind.IntConst);
+                    return new Number(token);
+                case TokenKind.RealConst:
+                    Eat(TokenKind.RealConst);
                     return new Number(token);
                 case TokenKind.LParen:
                 {

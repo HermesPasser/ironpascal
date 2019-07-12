@@ -19,74 +19,41 @@ namespace IronPascalTests
             var le = MakeLexer("234");
             var tok = le.NextToken();
 
-            Assert.AreEqual(tok.Type, TokenKind.Int);
-            Assert.AreEqual(tok.Value, 234);
+            Assert.AreEqual(tok.Type, TokenKind.IntConst);
+            Assert.AreEqual(tok.Value, 234.ToString());
         }
 
+
         [TestMethod]
-        public void TestMul()
+        public void TestReal()
         {
-            var lex = MakeLexer("*");
-            var tok = lex.NextToken();
-            Assert.AreEqual(tok.Type, TokenKind.Mul);
-            Assert.AreEqual(tok.Value, "*");
-        }
+            var le = MakeLexer("23.4");
+            var tok = le.NextToken();
 
-        [TestMethod]
-        public void TestDiv()
-        {
-            var lex = MakeLexer("/");
-            var tok = lex.NextToken();
-            Assert.AreEqual(tok.Type, TokenKind.Div);
-            Assert.AreEqual(tok.Value, "/");
+            Assert.AreEqual(tok.Type, TokenKind.RealConst);
+            Assert.AreEqual(tok.Value, 23.4f.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
-
+        
         [TestMethod]
-        public void TestPlus()
-        {
-            var lex = MakeLexer("+");
-            var tok = lex.NextToken();
-            Assert.AreEqual(tok.Type, TokenKind.Plus);
-            Assert.AreEqual(tok.Value, "+");
-        }
-
-        [TestMethod]
-        public void TestMinus()
-        {
-            var lex = MakeLexer("-");
-            var tok = lex.NextToken();
-            Assert.AreEqual(tok.Type, TokenKind.Minus);
-            Assert.AreEqual(tok.Value, "-");
-        }
-
-        [TestMethod]
-        public void TestLParen()
-        {
-            var lex = MakeLexer("(");
-            var tok = lex.NextToken();
-            Assert.AreEqual(tok.Type, TokenKind.LParen);
-            Assert.AreEqual(tok.Value, "(");
-        }
-
-        [TestMethod]
-        public void TestRParen()
-        {
-            var lex = MakeLexer(")");
-            var tok = lex.NextToken();
-            Assert.AreEqual(tok.Type, TokenKind.RParen);
-            Assert.AreEqual(tok.Value, ")");
-        }
-
-        [TestMethod]
-        public void TestNewTokens()
+        public void TestTokens()
         {
             var records = new Tuple<string, TokenKind, string>[]
             {
+                new Tuple<string, TokenKind, string>("234", TokenKind.IntConst, "234"),
+                new Tuple<string, TokenKind, string>("3.14", TokenKind.RealConst, "3.14"),
+                new Tuple<string, TokenKind, string>("*", TokenKind.Mul, "*"),
+                new Tuple<string, TokenKind, string>("DIV", TokenKind.IntDiv, "DIV"),
+                new Tuple<string, TokenKind, string>("/", TokenKind.FloatDiv, "/"),
+                new Tuple<string, TokenKind, string>("+", TokenKind.Plus, "+"),
+                new Tuple<string, TokenKind, string>("-", TokenKind.Minus, "-"),
+                new Tuple<string, TokenKind, string>("(", TokenKind.LParen, "("),
+                new Tuple<string, TokenKind, string>(")", TokenKind.RParen, ")"),
                 new Tuple<string, TokenKind, string>(":=", TokenKind.Assign, ":="),
                 new Tuple<string, TokenKind, string>(".", TokenKind.Dot, "."),
                 new Tuple<string, TokenKind, string>("Number", TokenKind.Id, "Number"),
                 new Tuple<string, TokenKind, string>(";", TokenKind.Semi, ";"),
-                new Tuple<string, TokenKind, string>("END", TokenKind.KeyEnd, "END")        
+                new Tuple<string, TokenKind, string>("BEGIN", TokenKind.KeyBegin, "BEGIN"),
+                new Tuple<string, TokenKind, string>("END", TokenKind.KeyEnd, "END")
             };
 
             foreach (var item in records)

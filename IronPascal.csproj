@@ -34,10 +34,14 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Parse\Assign.cs" />
-    <Compile Include="Parse\Compound.cs" />
-    <Compile Include="Parse\NoOperation.cs" />
-    <Compile Include="Parse\Variable.cs" />
+    <Compile Include="Parse\Nodes\Assign.cs" />
+    <Compile Include="Parse\Nodes\Block.cs" />
+    <Compile Include="Parse\Nodes\Compound.cs" />
+    <Compile Include="Parse\Nodes\NoOperation.cs" />
+    <Compile Include="Parse\Nodes\Program.cs" />
+    <Compile Include="Parse\Nodes\TypeAST.cs" />
+    <Compile Include="Parse\Nodes\Variable.cs" />
+    <Compile Include="Parse\Nodes\VariableDeclaration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Interpret\Interpreter.cs" />
     <Compile Include="Interpret\NodeVisitor.cs" />
@@ -45,10 +49,10 @@
     <Compile Include="Lex\TokenKind.cs" />
     <Compile Include="Lex\Lexer.cs" />
     <Compile Include="Lex\LexerException.cs" />
-    <Compile Include="Parse\AST.cs" />
-    <Compile Include="Parse\Number.cs" />
-    <Compile Include="Parse\BinaryOperation.cs" />
-    <Compile Include="Parse\UnaryOperation.cs" />
+    <Compile Include="Parse\Nodes\AST.cs" />
+    <Compile Include="Parse\Nodes\Number.cs" />
+    <Compile Include="Parse\Nodes\BinaryOperation.cs" />
+    <Compile Include="Parse\Nodes\UnaryOperation.cs" />
     <Compile Include="Parse\Parser.cs" />
     <Compile Include="Parse\ParseException.cs" />
   </ItemGroup>

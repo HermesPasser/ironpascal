@@ -15,46 +15,52 @@ namespace IronPascal.Interpret
             this.parser = parser;
         }
 
-        public int VisitBinaryOperation(BinaryOperation node)
+        public object VisitBinaryOperation(BinaryOperation node)
         {
+            double left = (double)Visit(node.Left);
+            double right = (double)Visit(node.Right);
+
             switch (node.Operation.Type)
             {
-                case TokenKind.Plus:
-                    return Visit(node.Left) + Visit(node.Right);
+                // TODO: aside from IntDiv, every operation can return a double with decimal places
+                case TokenKind.Plus:     
+                    return left + right;
                 case TokenKind.Minus:
-                    return Visit(node.Left) - Visit(node.Right);
+                    return left - right;
                 case TokenKind.Mul:
-                    return Visit(node.Left) * Visit(node.Right);
-                case TokenKind.Div:
-                    return Visit(node.Left) / Visit(node.Right);
+                    return left * right;
+                case TokenKind.IntDiv:
+                    return Math.Truncate(left / right);
+                case TokenKind.FloatDiv: 
+                    return left / right;
             }
 
             throw new ArgumentException($"TokenKind.{node.Operation.Type} is not supported.");
         }
 
-        public int VisitNumber(Number node) => (int)node.Value;
+        public double VisitNumber(Number node) => node.Value;
         
-        public int VisitUnaryOperation(UnaryOperation node)
+        public object VisitUnaryOperation(UnaryOperation node)
         {
             var operation = node.Operation.Type;
-            int result = Visit(node.Expression);
+            double result = (double) Visit(node.Expression);
             return operation == TokenKind.Plus ? +result : -result;
         }
 
-        public int VisitCompound(Compound node)
+        public double VisitCompound(Compound node)
         {
             foreach (var child in node.Children)
                 Visit(child);
             return 0;
         }
 
-        public int VisitNoOperation(NoOperation node) => 0;
+        public double VisitNoOperation(NoOperation node) => 0;
 
-        public int VisitAssign(Assign node)
+        public double VisitAssign(Assign node)
         {
             string varName = ((Variable)node.Left).Value;
             GlobalScope[varName] = Visit(node.Right);
-            return 0;
+            return 0; // since Visit() must return something
         }
 
         public object VisitVariable(Variable node)
@@ -67,6 +73,19 @@ namespace IronPascal.Interpret
             throw new Exception($"NameError: {varName} not found");
         }
 
-        public int Interpret() => Visit(parser.Parse());
+        public object VisitTypeNode(TypeNode node) => null;
+
+        public object VisitVariableDeclaration(AST node) => null;
+
+        public object VisitBlock(Block node)
+        {
+            foreach (var decl in node.Declarations)
+                Visit(decl);
+            return Visit(node.CompoundStatement); // no need to return 
+        }
+
+        public object VisitProgram(Parse.Program node) => Visit(node.block);
+        
+        public object Interpret() => Visit(parser.Parse());
     }
 }

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+
 namespace IronPascal.Lex
 {
     public class Lexer
@@ -11,7 +13,12 @@ namespace IronPascal.Lex
         private Dictionary<string, Token> ReservedKeywords =
             new Dictionary<string, Token>
             {
+                ["PROGRAM"] = new Token(TokenKind.KeyProgram, "PROGRAM"),
+                ["VAR"] = new Token(TokenKind.KeyVar, "VAR"),
+                ["DIV"] = new Token(TokenKind.IntDiv, "DIV"),
                 ["BEGIN"] = new Token(TokenKind.KeyBegin, "BEGIN"),
+                ["INTEGER"] = new Token(TokenKind.Int, "INTEGER"), // usar int mesmo?
+                ["REAL"] = new Token(TokenKind.Real, "REAL"),
                 ["END"] = new Token(TokenKind.KeyEnd, "END"),
             };
 
@@ -38,11 +45,44 @@ namespace IronPascal.Lex
                 Advance();
         }
 
+        void SkipComment()
+        {
+            while (CurrentChar != '}')
+                Advance();
+            Advance(); // close }
+        }
+
+        // retornava int e agora token
+        Token Number()
+        {
+            string result = "";
+            while (CurrentChar.HasValue && char.IsDigit(CurrentChar.Value))
+            {
+                result += CurrentChar;
+                Advance();
+            }
+
+            if (CurrentChar == '.')
+            {
+                result += CurrentChar;
+                Advance();
+                while (CurrentChar.HasValue && char.IsDigit(CurrentChar.Value))
+                {
+                    result += CurrentChar;
+                    Advance();
+                }
+
+                return new Token(TokenKind.RealConst, result);
+            }
+
+            return new Token(TokenKind.IntConst, result);
+        }
+
         Token Id()
         {
             string key = "";
-            // TODO: remove latin characters
-            while(CurrentChar.HasValue && char.IsLetter(CurrentChar.Value))
+            // TODO: remove latin characters and add _
+            while(CurrentChar.HasValue && char.IsLetterOrDigit(CurrentChar.Value))
             {
                 key += CurrentChar;
                 Advance();
@@ -53,18 +93,7 @@ namespace IronPascal.Lex
 
             return new Token(TokenKind.Id, key);
         }
-
-        int Integer()
-        {
-            string result = "";
-            while (CurrentChar.HasValue && char.IsDigit(CurrentChar.Value))
-            {
-                result += CurrentChar;
-                Advance();
-            }
-            return int.Parse(result);
-        }
-    
+            
         public Token NextToken()
         {
             while(CurrentChar.HasValue)
@@ -75,15 +104,20 @@ namespace IronPascal.Lex
                     continue;
                 }
 
+                if (CurrentChar == '{')
+                {
+                    Advance();
+                    SkipComment();
+                    continue;
+                }
+
                 // TODO: stills accepts latin letters
                 if (char.IsLetter(CurrentChar.Value))
                     return Id();
 
                 if (char.IsDigit(CurrentChar.Value))
-                {
-                    return new Token(TokenKind.Int, Integer());
-                }
-
+                    return Number();
+                
                 if (CurrentChar == ':' && Peek() == '=')
                 {
                     Advance(2);
@@ -94,6 +128,18 @@ namespace IronPascal.Lex
                 {
                     Advance();
                     return new Token(TokenKind.Semi, ";");
+                }
+
+                if (CurrentChar == ':')
+                {
+                    Advance();
+                    return new Token(TokenKind.Colon, ":");
+                }
+
+                if (CurrentChar == ',')
+                {
+                    Advance(2);
+                    return new Token(TokenKind.Comma, ",");
                 }
 
                 if (CurrentChar == '+')
@@ -117,7 +163,7 @@ namespace IronPascal.Lex
                 if (CurrentChar == '/')
                 {
                     Advance();
-                    return new Token(TokenKind.Div, "/");
+                    return new Token(TokenKind.FloatDiv, "/");
                 }
                 
                 if (CurrentChar == '(')

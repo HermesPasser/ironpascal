@@ -5,9 +5,9 @@ namespace IronPascal.Lex
     public class Token
     {
         public readonly TokenKind Type;
-        public readonly object Value;
+        public readonly string Value;
 
-        public Token(TokenKind type, object value)
+        public Token(TokenKind type, string value)
         {
             Type = type;
             Value = value;

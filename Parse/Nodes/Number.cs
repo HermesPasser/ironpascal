@@ -1,4 +1,4 @@
-using System;
+using System.Globalization;
 using IronPascal.Lex;
 
 namespace IronPascal.Parse
@@ -12,6 +12,6 @@ namespace IronPascal.Parse
             this.token = token;
         }
 
-        public object Value => token.Value;
+        public double Value => double.Parse(token.Value, CultureInfo.InvariantCulture);
     }
 }

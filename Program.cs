@@ -27,7 +27,7 @@ namespace IronPascal
                 if (text == null)
                     continue;
 
-                Lexer lexer = new Lexer($"BEGIN result := {text} END.");
+                Lexer lexer = new Lexer($"PROGRAM calc; VAR result : REAL; BEGIN result := {text} END.");
                 Interpreter interpreter = new Interpreter(new Parser(lexer));
                 interpreter.Interpret();
                 Console.WriteLine(interpreter.GlobalScope["result"]);
@@ -36,16 +36,23 @@ namespace IronPascal
 
         static void Dump(Dictionary<string, object> dict)
         {
+            Console.WriteLine('{');
+
             foreach (var key in dict.Keys)
-            {
-                Console.Write('{');
-                Console.Write($"'{key}': {dict[key]}");
-                Console.Write("}\n");
-            }
+                Console.Write($"\t'{key}': {dict[key]}\n");
+
+            Console.WriteLine("}");
         }
 
         static void Main(string[] args)
         {
+            // TODO: there's no information on GlobalScope to know if a var is
+            // int or float then everything on globalscope has a double value
+            // this can lead bugs since in no point i check if an int has decimal places acidentally
+
+#if DEBUG
+            args = new []{ "assignments.pas" };
+#endif
             if (args.Length < 1)
             {
                 Console.WriteLine("Invalid argument.");
@@ -68,7 +75,7 @@ namespace IronPascal
             Interpreter interpreter = new Interpreter(parser);
             interpreter.Interpret();
             Dump(interpreter.GlobalScope);
-            //Console.ReadKey();
+            Console.ReadKey();
         }
     }
 }

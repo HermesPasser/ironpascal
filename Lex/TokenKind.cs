@@ -2,12 +2,17 @@
 {
     public enum TokenKind
     {
-        Int, 
-        
+        Int,
+        Real,
+
+        RealConst,
+        IntConst,
+
         Plus,
         Minus,
         Mul,
-        Div,
+        IntDiv,
+        FloatDiv,
         
         LParen,
         RParen,
@@ -17,8 +22,13 @@
         Semi,
         Dot,
 
+        KeyProgram,
+        KeyVar,
         KeyBegin,
         KeyEnd,
+
+        Colon,
+        Comma,
 
         Eof
     }
