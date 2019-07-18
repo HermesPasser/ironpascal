@@ -4,3 +4,4 @@ obj/
 MigrationBackup/
 TestResults/
 *.user
+*.ini
