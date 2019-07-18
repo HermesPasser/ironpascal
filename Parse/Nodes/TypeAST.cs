@@ -5,7 +5,7 @@ namespace IronPascal.Parse
     public class TypeNode : AST
     {
         public readonly Token token;
-        public readonly object Value;
+        public readonly string Value;
 
         public TypeNode(Token token)
         {

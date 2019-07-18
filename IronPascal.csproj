@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F2E967E4-B3CB-4AA8-A809-C6C7C3D2646A}</ProjectGuid>
     <OutputType>exe</OutputType>
-    <RootNamespace>Interpreter</RootNamespace>
-    <AssemblyName>Interpreter</AssemblyName>
+    <RootNamespace>IronPascal</RootNamespace>
+    <AssemblyName>IronPascal</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -34,17 +34,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Parse\Nodes\Assign.cs" />
-    <Compile Include="Parse\Nodes\Block.cs" />
-    <Compile Include="Parse\Nodes\Compound.cs" />
-    <Compile Include="Parse\Nodes\NoOperation.cs" />
-    <Compile Include="Parse\Nodes\Program.cs" />
-    <Compile Include="Parse\Nodes\TypeAST.cs" />
-    <Compile Include="Parse\Nodes\Variable.cs" />
-    <Compile Include="Parse\Nodes\VariableDeclaration.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="NodeVisitor.cs" />
     <Compile Include="Interpret\Interpreter.cs" />
-    <Compile Include="Interpret\NodeVisitor.cs" />
     <Compile Include="Lex\Token.cs" />
     <Compile Include="Lex\TokenKind.cs" />
     <Compile Include="Lex\Lexer.cs" />
@@ -55,6 +47,19 @@
     <Compile Include="Parse\Nodes\UnaryOperation.cs" />
     <Compile Include="Parse\Parser.cs" />
     <Compile Include="Parse\ParseException.cs" />
+    <Compile Include="Parse\Nodes\Assign.cs" />
+    <Compile Include="Parse\Nodes\Block.cs" />
+    <Compile Include="Parse\Nodes\Compound.cs" />
+    <Compile Include="Parse\Nodes\NoOperation.cs" />
+    <Compile Include="Parse\Nodes\Program.cs" />
+    <Compile Include="Parse\Nodes\TypeAST.cs" />
+    <Compile Include="Parse\Nodes\Variable.cs" />
+    <Compile Include="Parse\Nodes\VariableDeclaration.cs" />
+    <Compile Include="Symbols\BuildinTypeSimbol.cs" />
+    <Compile Include="Symbols\Symbol.cs" />
+    <Compile Include="Symbols\SymbolTable.cs" />
+    <Compile Include="Symbols\SymbolTableBuilder.cs" />
+    <Compile Include="Symbols\VarSymbol.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

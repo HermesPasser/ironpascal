@@ -144,7 +144,7 @@ namespace IronPascal.Parse
                 
         AST AssignmentStatement()
         {
-            AST left = Variable();
+            Variable left = Variable();
             Token token = CurrentToken;
             Eat(TokenKind.Assign);
             AST right = Expr();

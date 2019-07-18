@@ -69,6 +69,8 @@ namespace IronPascalTests
         {
             InterpretInvalidSyntax(@"
                 PROGRAM Test;
+                VAR
+                a : INTEGER;
                 BEGIN
                    a := 10 * ;  {Invalid syntax}
                 END."
@@ -80,10 +82,47 @@ namespace IronPascalTests
         {
             InterpretInvalidSyntax(@"
                 PROGRAM Test;
+                VAR
+                   a : INTEGER;
                 BEGIN
                    a := 1 (1 + 2); {Invalid syntax}
                 END."
             );
+        }
+
+        [TestMethod]
+        public void TestIntegerArithmeticExpressions()
+        {
+            var exprResults = new Tuple<string, double>[]
+            {
+                new Tuple<string, double>("3", 3),
+                new Tuple<string, double>("2 + 7 * 4", 30),
+                new Tuple<string, double>("7 - 8 DIV 4", 5),
+                new Tuple<string, double>("14 + 2 * 3 - 6 DIV 2", 17),
+                new Tuple<string, double>("7 + 3 * (10 DIV (12 DIV (3 + 1) - 1))", 22),
+                new Tuple<string, double>("7 + 3 * (10 DIV (12 DIV (3 + 1) - 1)) DIV (2 + 3) - 5 - 3 + (8)", 10),
+                new Tuple<string, double>("7 + (((3 + 2)))", 12),
+                new Tuple<string, double>("- 3", -3),
+                new Tuple<string, double>("+ 3", 3),
+                new Tuple<string, double>("5 - - - + - 3", 8),
+                new Tuple<string, double>("5 - - - + - (3 + 4) - +2", 10),
+            };
+
+            foreach (var item in exprResults)
+            {
+                var intr = MakeInterpreter($@"
+                       PROGRAM Test;
+                       VAR
+                           a : INTEGER;
+                       BEGIN
+                           a := {item.Item1}
+                       END.
+                ");
+
+                intr.Interpret();
+                var v = intr.GlobalScope["a"];
+                Assert.AreEqual(intr.GlobalScope["a"], item.Item2);
+            }
         }
 
         [TestMethod]

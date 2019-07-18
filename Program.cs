@@ -51,7 +51,7 @@ namespace IronPascal
             // this can lead bugs since in no point i check if an int has decimal places acidentally
 
 #if DEBUG
-            args = new []{ "assignments.pas" };
+            args = new []{ "assignments.pas" };     
 #endif
             if (args.Length < 1)
             {
