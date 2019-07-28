@@ -24,6 +24,7 @@
 
         KeyProgram,
         KeyVar,
+        KeyProcedure,
         KeyBegin,
         KeyEnd,
 

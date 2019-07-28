@@ -16,7 +16,6 @@ namespace IronPascal.Parse
             CurrentToken = this.lexer.NextToken();
         }
         
-        // no END; (primeiro que aparece) ele ta esperando ponto por algum motivo
         void ThrowError(TokenKind expected) => throw new ParseException($"Invalid syntax, expected {expected}, given {CurrentToken.Type}");
                 
         void Eat(TokenKind tokenType)
@@ -32,7 +31,7 @@ namespace IronPascal.Parse
         AST Program()
         {
             Eat(TokenKind.KeyProgram);
-            // TODO: dando erro já que não permiti que vars divessem numeros
+            // TODO: dando erro jï¿½ que nï¿½o permiti que vars divessem numeros
             Variable varNode = Variable(); // cuz the prog name follow the same rules as the variable
             string progName = varNode.Value;
             Eat(TokenKind.Semi);
@@ -52,15 +51,30 @@ namespace IronPascal.Parse
         List<AST> Declarations()
         {
             List<AST> declarations = new List<AST>();
-            if (CurrentToken.Type == TokenKind.KeyVar)
-            {
-                Eat(TokenKind.KeyVar);
-                while (CurrentToken.Type == TokenKind.Id)
-                {
-                    declarations.AddRange(VariableDeclaration());
-                    Eat(TokenKind.Semi);
-                }
-            }
+			while(true)
+			{
+				if (CurrentToken.Type == TokenKind.KeyVar)
+				{
+					Eat(TokenKind.KeyVar);
+					while (CurrentToken.Type == TokenKind.Id)
+					{
+						declarations.AddRange(VariableDeclaration());
+						Eat(TokenKind.Semi);
+					}
+				}
+				
+				else if (CurrentToken.Type == TokenKind.KeyProcedure)
+				{
+					Eat(TokenKind.KeyProcedure);
+					string procName = CurrentToken.Value;
+					Eat(TokenKind.Id);
+					Eat(TokenKind.Semi);
+					Block blockNode = Block();
+					ProcedureDeclaration prodDecl = new ProcedureDeclaration(procName, blockNode);
+					declarations.Add(prodDecl);
+					Eat(TokenKind.Semi);
+				} else break;
+			}
             return declarations;
         }
 
@@ -76,16 +90,17 @@ namespace IronPascal.Parse
             }
 
             Eat(TokenKind.Colon);
-            AST typeNode = TypeSpec();
+
+            TypeNode typeNode = TypeSpec();
             var varDeclarations = new List<AST>();
 
-            foreach (var varNode in varNodes)
+            foreach (Variable varNode in varNodes)
                 varDeclarations.Add(new VariableDeclaration(varNode, typeNode));
 
             return varDeclarations;
         }
 
-        AST TypeSpec()
+        TypeNode TypeSpec()
         {
             Token token = CurrentToken;
             if (CurrentToken.Type == TokenKind.Int)
@@ -213,7 +228,7 @@ namespace IronPascal.Parse
                 case TokenKind.Minus:
                     Eat(TokenKind.Minus);
                     return new UnaryOperation(token, Factor());
-                case TokenKind.IntConst: // TODO: ver p q serve o Int e se ele ainda é usado
+                case TokenKind.IntConst: // TODO: ver p q serve o Int e se ele ainda ï¿½ usado
                     Eat(TokenKind.IntConst);
                     return new Number(token);
                 case TokenKind.RealConst:

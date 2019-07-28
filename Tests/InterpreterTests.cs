@@ -12,7 +12,7 @@ namespace IronPascalTests
         Interpreter MakeInterpreter(string text)
         {
             Parser p = new Parser(new Lexer(text));
-            return new Interpreter(p);
+            return new Interpreter(p.Parse());
         }
 
         [TestMethod]
@@ -46,15 +46,15 @@ namespace IronPascalTests
                     END.
                 ");
                 i.Interpret();
-                Assert.AreEqual((double)i.GlobalScope["a"], result);
+                Assert.AreEqual((double)i.GlobalMemory["a"], result);
             }
         }
 
         void InterpretInvalidSyntax(string text)
-        {
-            var i = MakeInterpreter(text);
+        {           
             try
             {
+				var i = MakeInterpreter(text);
                 i.Interpret();
                 Assert.Fail();
             }
@@ -120,8 +120,8 @@ namespace IronPascalTests
                 ");
 
                 intr.Interpret();
-                var v = intr.GlobalScope["a"];
-                Assert.AreEqual(intr.GlobalScope["a"], item.Item2);
+                var v = intr.GlobalMemory["a"];
+                Assert.AreEqual(intr.GlobalMemory["a"], item.Item2);
             }
         }
 
@@ -147,7 +147,7 @@ namespace IronPascalTests
                 ");
 
                 intr.Interpret();
-                Assert.AreEqual(intr.GlobalScope["a"],item.Item2);
+                Assert.AreEqual(intr.GlobalMemory["a"],item.Item2);
             }
         }
 
@@ -155,33 +155,39 @@ namespace IronPascalTests
         public void TestProgram()
         {
             string text = @"
-PROGRAM Part10;
+PROGRAM Part12;
 VAR
-   number     : INTEGER;
-   a, b, c, x : INTEGER;
-   y          : REAL;
-BEGIN {Part10}
-   BEGIN
-      number := 2;
-      a := number;
-      b := 10 * a + 10 * number DIV 4;
-      c := a - - b
-   END;
-   x := 11;
-   y := 2.857142857142857 + 3.14
-END.  {Part10}
+   number : INTEGER;
+   a, b   : INTEGER;
+   y      : REAL;
+PROCEDURE P1;
+VAR
+   a : REAL;
+   k : INTEGER;
+   PROCEDURE P2;
+   VAR
+      a, z : INTEGER;
+   BEGIN {P2}
+      z := 777;
+   END;  {P2}
+BEGIN {P1}
+END;  {P1}
+BEGIN {Part12}
+   number := 2;
+   a := number ;
+   b := 10 * a + 10 * number DIV 4;
+   y := 20 / 7 + 3.14
+END.  {Part12}
 ";
             var i = MakeInterpreter(text);
             i.Interpret();
-            var global = i.GlobalScope;
+            var global = i.GlobalMemory;
 
             // parse because globalscope store as object(double)
-            Assert.AreEqual(global.Count, 6);
+            Assert.AreEqual(global.Count, 4);
             Assert.AreEqual((double)global["number"], 2);
             Assert.AreEqual((double)global["a"], 2);
             Assert.AreEqual((double)global["b"], 25);
-            Assert.AreEqual((double)global["c"], 27);
-            Assert.AreEqual((double)global["x"], 11);
             Assert.AreEqual((double)global["y"], 20d / 7 + 3.14); // without the suffix will consider 20 as int
         }
     }

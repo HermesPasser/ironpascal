@@ -19,6 +19,7 @@ namespace IronPascal.Lex
                 ["BEGIN"] = new Token(TokenKind.KeyBegin, "BEGIN"),
                 ["INTEGER"] = new Token(TokenKind.Int, "INTEGER"), // usar int mesmo?
                 ["REAL"] = new Token(TokenKind.Real, "REAL"),
+                ["PROCEDURE"] = new Token(TokenKind.KeyProcedure, "PROCEDURE"),
                 ["END"] = new Token(TokenKind.KeyEnd, "END"),
             };
 
@@ -88,8 +89,8 @@ namespace IronPascal.Lex
                 Advance();
             }
 
-            if (ReservedKeywords.ContainsKey(key))
-                return ReservedKeywords[key];
+            if (ReservedKeywords.ContainsKey(key.ToUpper()))
+                return ReservedKeywords[key.ToUpper()];
 
             return new Token(TokenKind.Id, key);
         }

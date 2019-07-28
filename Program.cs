@@ -28,9 +28,9 @@ namespace IronPascal
                     continue;
 
                 Lexer lexer = new Lexer($"PROGRAM calc; VAR result : REAL; BEGIN result := {text} END.");
-                Interpreter interpreter = new Interpreter(new Parser(lexer));
+                Interpreter interpreter = new Interpreter((new Parser(lexer)).Parse());
                 interpreter.Interpret();
-                Console.WriteLine(interpreter.GlobalScope["result"]);
+                Console.WriteLine(interpreter.GlobalMemory["result"]);
             }
         }
 
@@ -46,10 +46,7 @@ namespace IronPascal
 
         static void Main(string[] args)
         {
-            // TODO: there's no information on GlobalScope to know if a var is
-            // int or float then everything on globalscope has a double value
-            // this can lead bugs since in no point i check if an int has decimal places acidentally
-
+            
 #if DEBUG
             args = new []{ "assignments.pas" };     
 #endif
@@ -71,10 +68,26 @@ namespace IronPascal
 
             Lexer lexer = new Lexer(text);
             Parser parser = new Parser(lexer);
+            var tree = parser.Parse();
+            
+            SemanticAnalyzer analyzer = new SemanticAnalyzer();
+            try
+			{				
+				analyzer.Visit(tree);
+			} 
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+            			
+            Console.WriteLine(analyzer.SymTab);
 
-            Interpreter interpreter = new Interpreter(parser);
-            interpreter.Interpret();
-            Dump(interpreter.GlobalScope);
+            Interpreter interpreter = new Interpreter(tree);
+            var res = interpreter.Interpret();
+            Console.WriteLine();
+            Console.WriteLine("Run-time GLOBAL_MEMORY contents:");
+			
+            Dump(interpreter.GlobalMemory);
             Console.ReadKey();
         }
     }

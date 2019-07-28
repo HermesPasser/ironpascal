@@ -7,10 +7,10 @@ namespace IronPascal.Parse
         public readonly Variable VariableNode;
         public readonly TypeNode typeNode;
 
-        public VariableDeclaration(AST varNode, AST typeNode)
+        public VariableDeclaration(Variable varNode, TypeNode typeNode)
         {
-            VariableNode = (Variable) varNode;
-            this.typeNode = (TypeNode) typeNode;
+            VariableNode = varNode;
+            this.typeNode = typeNode;
         }
     }
 }

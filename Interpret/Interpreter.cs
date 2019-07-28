@@ -7,12 +7,12 @@ namespace IronPascal.Interpret
 {
     public class Interpreter : NodeVisitor
     {
-        private Parser parser;
-        public Dictionary<string, object> GlobalScope = new Dictionary<string, object>();
+        private readonly AST Tree;
+        public Dictionary<string, object> GlobalMemory = new Dictionary<string, object>();
 
-        public Interpreter(Parser parser)
+        public Interpreter(AST tree)
         {
-            this.parser = parser;
+            Tree = tree;
         }
 
         public object VisitBinaryOperation(BinaryOperation node)
@@ -23,7 +23,7 @@ namespace IronPascal.Interpret
             switch (node.Operation.Type)
             {
                 // TODO: aside from IntDiv, every operation can return a double with decimal places
-                case TokenKind.Plus:     
+                case TokenKind.Plus:
                     return left + right;
                 case TokenKind.Minus:
                     return left - right;
@@ -31,7 +31,7 @@ namespace IronPascal.Interpret
                     return left * right;
                 case TokenKind.IntDiv:
                     return Math.Truncate(left / right);
-                case TokenKind.FloatDiv: 
+                case TokenKind.FloatDiv:
                     return left / right;
             }
 
@@ -39,53 +39,57 @@ namespace IronPascal.Interpret
         }
 
         public double VisitNumber(Number node) => node.Value;
-        
+
         public object VisitUnaryOperation(UnaryOperation node)
         {
             var operation = node.Operation.Type;
-            double result = (double) Visit(node.Expression);
+            double result = (double)Visit(node.Expression);
             return operation == TokenKind.Plus ? +result : -result;
         }
 
-        public double VisitCompound(Compound node)
+        public void VisitCompound(Compound node)
         {
             foreach (var child in node.Children)
                 Visit(child);
-            return 0;
         }
 
-        public double VisitNoOperation(NoOperation node) => 0;
+        public void VisitNoOperation(NoOperation node) { }
 
-        public double VisitAssign(Assign node)
+        public void VisitAssign(Assign node)
         {
             string varName = ((Variable)node.Left).Value;
-            GlobalScope[varName] = Visit(node.Right);
-            return 0; // since Visit() must return something
+            GlobalMemory[varName] = Visit(node.Right);
         }
 
         public object VisitVariable(Variable node)
         {
             string varName = node.Value;
-            if (GlobalScope.ContainsKey(varName))
-                return GlobalScope[varName];
+            if (GlobalMemory.ContainsKey(varName))
+                return GlobalMemory[varName];
 
             // TODO: make a NameErrorException
             throw new Exception($"NameError: {varName} not found");
         }
 
-        public object VisitTypeNode(TypeNode node) => null;
+        public void VisitTypeNode(TypeNode node) { }
 
-        public object VisitVariableDeclaration(AST node) => null;
-
-        public object VisitBlock(Block node)
+        public void VisitVariableDeclaration(AST node) {}
+		
+        public void VisitBlock(Block node)
         {
             foreach (var decl in node.Declarations)
                 Visit(decl);
-            return Visit(node.CompoundStatement); // no need to return 
+            Visit(node.CompoundStatement);
         }
-
-        public object VisitProgram(Parse.Program node) => Visit(node.block);
+	
+        public void VisitProcedureDeclaration(AST node)
+        {
+            //
+			
+        }
+		
+        public void VisitProgram(Parse.Program node) => Visit(node.block);
         
-        public object Interpret() => Visit(parser.Parse());
+        public object Interpret() => Visit(Tree);
     }
 }

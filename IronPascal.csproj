@@ -43,6 +43,7 @@
     <Compile Include="Lex\LexerException.cs" />
     <Compile Include="Parse\Nodes\AST.cs" />
     <Compile Include="Parse\Nodes\Number.cs" />
+    <Compile Include="Parse\Nodes\ProcedureDeclaration.cs" />
     <Compile Include="Parse\Nodes\BinaryOperation.cs" />
     <Compile Include="Parse\Nodes\UnaryOperation.cs" />
     <Compile Include="Parse\Parser.cs" />
@@ -56,9 +57,9 @@
     <Compile Include="Parse\Nodes\Variable.cs" />
     <Compile Include="Parse\Nodes\VariableDeclaration.cs" />
     <Compile Include="Symbols\BuildinTypeSimbol.cs" />
+    <Compile Include="Symbols\SemanticAnalyzer.cs" />
     <Compile Include="Symbols\Symbol.cs" />
     <Compile Include="Symbols\SymbolTable.cs" />
-    <Compile Include="Symbols\SymbolTableBuilder.cs" />
     <Compile Include="Symbols\VarSymbol.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

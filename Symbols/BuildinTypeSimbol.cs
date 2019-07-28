@@ -9,7 +9,8 @@ namespace IronPascal
     class BuildinTypeSimbol : Symbol
     {
         public BuildinTypeSimbol(string name) : base(name, null) { }
-        public override string ToString() => Name;
+        public override string ToString() => $"<{GetType().Name}(Name='{Name}')>";
+        
     }
 
 }
